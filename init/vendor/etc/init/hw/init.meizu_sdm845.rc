@@ -17,6 +17,9 @@ on init
     chown system system  /sys/cs_press/cs_press/sleep
     # @}
 
+on fs
+    setprop sys.usb.ffs.aio_compat 1
+
 on post-fs-data
     #zengxin@System.Setting Disable/Enable mCharge {@
     chown system system /sys/class/meizu/charger/fastcharging
