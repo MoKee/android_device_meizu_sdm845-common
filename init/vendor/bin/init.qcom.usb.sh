@@ -105,6 +105,7 @@ if [ "$usb_config" == "" ]; then #USB persist config not set, select default con
 	              "msm8937")
 			    case "$soc_id" in
 				    "313" | "320")
+				       echo BAM2BAM_IPA > /sys/class/android_usb/android0/f_rndis_qc/rndis_transports
 				       setprop persist.vendor.usb.config diag,serial_smd,rmnet_ipa,adb
 				    ;;
 				    *)
@@ -112,7 +113,7 @@ if [ "$usb_config" == "" ]; then #USB persist config not set, select default con
 				    ;;
 			    esac
 		      ;;
-	              "msm8952" | "msm8953")
+	              "msm8953")
 		          setprop persist.vendor.usb.config diag,serial_smd,rmnet_ipa,adb
 		      ;;
 	              "msm8998" | "sdm660" | "apq8098_latv")
@@ -178,24 +179,6 @@ if [ -d /config/usb_gadget ]; then
 		echo $serialno > /config/usb_gadget/g1/strings/0x409/serialnumber
 	fi
 fi
-
-#
-# Do target specific things
-#
-case "$target" in
-    "msm8996" | "msm8953")
-        echo BAM2BAM_IPA > /sys/class/android_usb/android0/f_rndis_qc/rndis_transports
-        echo 131072 > /sys/module/g_android/parameters/mtp_tx_req_len
-        echo 131072 > /sys/module/g_android/parameters/mtp_rx_req_len
-    ;;
-    "msm8937")
-	case "$soc_id" in
-		"313" | "320")
-		   echo BAM2BAM_IPA > /sys/class/android_usb/android0/f_rndis_qc/rndis_transports
-		;;
-	esac
-   ;;
-esac
 
 #
 # Initialize RNDIS Diag option. If unset, set it to 'none'.
