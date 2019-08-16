@@ -112,74 +112,8 @@ fi
 baseband=`getprop ro.baseband`
 
 echo 1  > /sys/class/android_usb/f_mass_storage/lun/nofua
-usb_config=`getprop persist.vendor.usb.config`
-if [ "$usb_config" == "" ]; then #USB persist config not set, select default configuration
-      case "$esoc_link" in
-          "PCIe")
-              setprop persist.vendor.usb.config diag,diag_mdm,serial_cdev,rmnet_qti_ether,mass_storage,adb
-          ;;
-          *)
-	  case "$baseband" in
-	      "apq")
-	          setprop persist.vendor.usb.config diag,adb
-	      ;;
-	      *)
-	      case "$soc_hwplatform" in
-	          "Dragon" | "SBC")
-	              setprop persist.vendor.usb.config diag,adb
-	          ;;
-                  *)
-		  soc_machine=${soc_machine:0:3}
-		  case "$soc_machine" in
-		    "SDA")
-	              setprop persist.vendor.usb.config diag,adb
-		    ;;
-		    *)
-	            case "$target" in
-                      "msm8916")
-		          setprop persist.sys.usb.config diag,serial_smd,rmnet_bam,adb
-		      ;;
-	              "msm8994" | "msm8992")
-	                  setprop persist.sys.usb.config diag,serial_smd,serial_tty,rmnet_ipa,mass_storage,adb
-		      ;;
-	              "msm8996")
-	                  setprop persist.vendor.usb.config diag,serial_cdev,serial_tty,rmnet_ipa,mass_storage,adb
-		      ;;
-	              "msm8909")
-		          setprop persist.vendor.usb.config diag,serial_smd,rmnet_qti_bam,adb
-		      ;;
-	              "msm8937")
-			    case "$soc_id" in
-				    "313" | "320")
-				       setprop persist.vendor.usb.config diag,serial_smd,rmnet_ipa,adb
-				    ;;
-				    *)
-				       setprop persist.vendor.usb.config diag,serial_smd,rmnet_qti_bam,adb
-				    ;;
-			    esac
-		      ;;
-	              "msm8952" | "msm8953")
-		          setprop persist.vendor.usb.config diag,serial_smd,rmnet_ipa,adb
-		      ;;
-	              "msm8998" | "sdm660" | "apq8098_latv")
-		          setprop persist.vendor.usb.config diag,serial_cdev,rmnet,adb
-		      ;;
-	              "sdm845" | "sdm670")
-		          setprop persist.vendor.usb.config diag,serial_cdev,rmnet,dpl,adb
-		      ;;
-	              *)
-		          setprop persist.vendor.usb.config diag,adb
-		      ;;
-                    esac
-		    ;;
-		  esac
-	          ;;
-	      esac
-	      ;;
-	  esac
-	  ;;
-      esac
-fi
+# Clear vendor USB config because it is only needed for debugging
+setprop persist.vendor.usb.config ""
 
 # set USB controller's device node
 case "$target" in
