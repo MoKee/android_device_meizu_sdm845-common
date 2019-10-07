@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#define LOG_TAG "android.hardware.vibrator@1.2-service.meizu_sdm845"
+#define LOG_TAG "android.hardware.vibrator@1.3-service.meizu_sdm845"
 
 #include <android-base/logging.h>
 #include <hidl/HidlTransportSupport.h>
@@ -23,8 +23,8 @@
 
 using android::hardware::configureRpcThreadpool;
 using android::hardware::joinRpcThreadpool;
-using android::hardware::vibrator::V1_2::IVibrator;
-using android::hardware::vibrator::V1_2::implementation::Vibrator;
+using android::hardware::vibrator::V1_3::IVibrator;
+using android::hardware::vibrator::V1_3::implementation::Vibrator;
 
 int main() {
     vibrator_device_t *vib_device;
