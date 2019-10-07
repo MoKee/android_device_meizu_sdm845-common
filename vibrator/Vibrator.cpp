@@ -24,7 +24,7 @@
 namespace android {
 namespace hardware {
 namespace vibrator {
-namespace V1_2 {
+namespace V1_3 {
 namespace implementation {
 
 Vibrator::Vibrator(vibrator_device_t *device)
@@ -78,6 +78,20 @@ Return<void> Vibrator::perform_1_2(V1_2::Effect effect, EffectStrength strength,
     return perform<decltype(effect)>(effect, strength, _hidl_cb);
 }
 
+// Methods from ::android::hardware::vibrator::V1_3::IVibrator follow.
+
+Return<bool> Vibrator::supportsExternalControl() {
+    return false;
+}
+
+Return<Status> Vibrator::setExternalControl(bool) {
+    return Status::UNSUPPORTED_OPERATION;
+}
+
+Return<void> Vibrator::perform_1_3(Effect effect, EffectStrength strength, perform_cb _hidl_cb) {
+    return perform<decltype(effect)>(effect, strength, _hidl_cb);
+}
+
 // Private methods follow.
 
 Return<void> Vibrator::perform(Effect effect, EffectStrength strength, perform_cb _hidl_cb) {
@@ -93,6 +107,7 @@ Return<void> Vibrator::perform(Effect effect, EffectStrength strength, perform_c
             id = 31003;
             break;
         case Effect::TICK:
+        case Effect::TEXTURE_TICK:
             id = 21000;
             break;
         case Effect::THUD:
@@ -149,7 +164,7 @@ Return<void> Vibrator::perform(T effect, EffectStrength strength, perform_cb _hi
 }
 
 }  // namespace implementation
-}  // namespace V1_2
+}  // namespace V1_3
 }  // namespace vibrator
 }  // namespace hardware
 }  // namespace android
