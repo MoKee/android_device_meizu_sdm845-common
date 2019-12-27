@@ -181,6 +181,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/sec_config:$(TARGET_COPY_OUT_VENDOR)/etc/sec_config
 
+# Lights
+PRODUCT_PACKAGES += \
+    android.hardware.light@2.0-service.meizu_sdm845
+
 # Media
 PRODUCT_PACKAGES += \
     libOmxAacEnc \
