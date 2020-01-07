@@ -15,6 +15,7 @@ cc_binary {
     srcs: [
         "DisplayModes.cpp",
         "PictureAdjustment.cpp",
+        "SunlightEnhancement.cpp",
         "Utils.cpp",
         "service.cpp",
     ],
