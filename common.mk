@@ -190,6 +190,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.light@2.0-service.meizu_sdm845
 
+# LiveDisplay
+PRODUCT_PACKAGES += \
+    vendor.mokee.livedisplay@2.0-service.meizu_sdm845
+
 # Media
 PRODUCT_PACKAGES += \
     libOmxAacEnc \
