@@ -1,0 +1,6 @@
+[
+  {
+    "repository": "android_vendor_meizu_sdm845-common",
+    "target_path": "vendor/meizu/sdm845-common"
+  }
+]
