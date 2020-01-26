@@ -28,7 +28,7 @@
 #
 
 on early-init
-    exec u:r:vendor_modprobe:s0 -- /vendor/bin/modprobe -a -d /vendor/lib/modules pinctrl-wcd wcd-dsp-glink snd-soc-wcd-spi snd-soc-sdm845
+    exec u:r:vendor_modprobe:s0 -- /vendor/bin/modprobe -a -d /vendor/lib/modules snd-soc-cs35l41-spi pinctrl-wcd wcd-dsp-glink snd-soc-wcd-spi snd-soc-sdm845
     write /proc/sys/kernel/sched_boost 1
     mkdir /dsp 0771 media media
     mkdir /firmware 0771 system system
@@ -88,7 +88,7 @@ on boot
     write /dev/cpuset/system-background/cpus 0-3
     write /dev/cpuset/top-app/cpus 0-7
     write /dev/cpuset/foreground/cpus 0-7
-    write /dev/cpuset/foreground/boost/cpus 0-7
+    write /dev/cpuset/foreground/boost/cpus 4-7
     write /dev/cpuset/background/cpus 0-7
     write /dev/cpuset/system-background/cpus 0-7
 
@@ -137,7 +137,6 @@ on property:sys.shutdown.requested=*
     stop per_proxy
 
 on charger
-    start hvdcp_opti
     start power_off_alarm
 
 ## import cne init file
@@ -273,6 +272,10 @@ service cdsprpcd /vendor/bin/cdsprpcd
 #    chown system drmrpc /sys/devices/f9966000.i2c/i2c-1/1-0020/secure_touch
 #
 #
+    chmod 0660 /sys/bus/i2c/devices/3-0020/secure_touch_enable
+    chmod 0440 /sys/bus/i2c/devices/3-0020/secure_touch
+    chown system drmrpc /sys/bus/i2c/devices/3-0020/secure_touch_enable
+    chown system drmrpc /sys/bus/i2c/devices/3-0020/secure_touch
 #
 ## imsdatadaemon starts with root and UID will be downgraded to SYSTEM.
 service imsqmidaemon /system/vendor/bin/imsqmidaemon
@@ -395,12 +398,14 @@ on property:init.svc.hwcomposer-2-1=restarting
 #    user system
 #    group system
 
-service hbtp /system/vendor/bin/hbtp_daemon
-     class main
-     user system
-     group system
-     capabilities SYS_NICE
-     disabled
+#Add by xuguochu@meizu.com
+#service hbtp /system/vendor/bin/hbtp_daemon
+#     class main
+#     user system
+#     group system
+#     capabilities SYS_NICE
+#     disabled
+#end
 
 service qfp-daemon /vendor/bin/qfp-daemon
     class late_start
@@ -413,16 +418,17 @@ service energy-awareness /system/vendor/bin/energy-awareness
     group system
     oneshot
 
+# PA calibration {@
+on post-fs-data
+    chown system audio /dev/msm_cirrus_playback
+    chmod 0660 /dev/msm_cirrus_playback
+# @}
+
 service seempd /system/bin/seempd
     class late_start
     user system
     group system sdcard_rw
     socket seempdw dgram 0666 system system
-
-service hvdcp_opti /system/vendor/bin/hvdcp_opti
-    class main
-    user root
-    group system wakelock
 
 service smcinvoked /system/bin/smcinvoked
     class main
@@ -433,3 +439,80 @@ service tlocd /vendor/bin/tloc_daemon
     class late_start
     user system
     group drmrpc gps net_raw
+
+#BSP: device status logger service
+service mdevice_manager /vendor/bin/mdevice_manager
+    class late_start
+    user system
+    group system sdcard_rw
+    seclabel u:r:mdevice_manager:s0
+
+#BSP: mkelog parser
+service mkelog_parser /vendor/bin/mkelog_parser
+    class late_start
+    user system
+    group system sdcard_rw
+    seclabel u:r:mkelog_parser:s0
+    oneshot
+
+# FLYME:wanglong@Telecom.TeleService.Feature#636837 {@
+   chmod 0666 /sys/bus/msm_subsys/devices/subsys4/restart_level
+#
+
+#FLYME:liujianfeng@feature for tool of ap&cp log{@
+service logkit /system/vendor/bin/logkit /data/media/0/Android/log/  50  0
+    class late_start
+    user root
+    group log system
+    socket logkit stream 666 system system
+    disabled
+    oneshot
+
+service stop_logkit /system/vendor/bin/logkit -k /data/media/0/Android/log/
+    class late_start
+    user root
+    group system log
+    socket logkit stream 666 system system
+    disabled
+    oneshot
+
+on property:persist.radio.aplog=1
+    start logkit
+on property:persist.radio.aplog=0
+    start stop_logkit
+
+service diag_mdlog /vendor/bin/diag_mdlog -f /sdcard/DiagFromAssets.cfg -o /data/media/0/diag_logs -s 200 -n 200 -w /data/media/0/diag_logs
+    class late_start
+    user root
+    group log system qcom_diag sdcard_rw sdcard_r media_rw
+    disabled
+    oneshot #for running only once
+
+service dm_stop /vendor/bin/diag_mdlog -k
+    class late_start
+    user root
+    group log system qcom_diag sdcard_rw sdcard_r media_rw
+    disabled
+    oneshot #for running only once
+
+on property:persist.sys.diag.cmd=2
+    start diag_mdlog
+
+on property:persist.sys.diag.cmd=1
+    start dm_stop
+    setprop persist.sys.diag.cmd 0
+# @}
+
+# Camera_Edit add by yzw@meizu.com To enable samsung remosaic
+service remosaic_daemon /system/vendor/bin/remosaic_daemon
+    class late_start
+    user camera
+    group camera
+
+# Add M63 cs press calibration by Richard {@
+on post-fs-data
+    chown system system /dev/ndt
+    chmod 0666 /dev/ndt
+    chown system system /sys/cs_press/cs_press/cal_data
+    chmod 0666 /sys/cs_press/cs_press/cal_data
+# @}
