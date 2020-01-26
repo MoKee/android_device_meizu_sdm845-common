@@ -54,9 +54,9 @@ on factory-fs && property:ro.bootmode=ffbm-01
     mount tmpfs tmpfs /data
 
 on post-fs-data
-    setprop persist.sys.usb.ffbm-00.func diag
-    setprop persist.sys.usb.ffbm-01.func diag
-    setprop persist.sys.usb.ffbm-02.func diag
+    setprop persist.sys.usb.ffbm-00.func ${persist.sys.usb.config}
+    setprop persist.sys.usb.ffbm-01.func ${persist.sys.usb.config}
+    setprop persist.sys.usb.ffbm-02.func ${persist.sys.usb.config}
 
 on mmi && property:ro.bootmode=ffbm-00
     # ========================================================
@@ -66,6 +66,8 @@ on mmi && property:ro.bootmode=ffbm-00
     mkdir /persist/FTM_AP 0750 root root
 
     start fastmmi
+	## start qcom-post-boot to set the misc partition path property value
+	start qcom-post-boot
 
 on mmi && property:ro.bootmode=ffbm-01
     # ========================================================
@@ -75,6 +77,8 @@ on mmi && property:ro.bootmode=ffbm-01
     mkdir /persist/FTM_AP 0750 root root
 
     start fastmmi
+	# start qcom-post-boot to set the misc partition path property value
+	start qcom-post-boot
 
 on ffbm
     trigger early-fs

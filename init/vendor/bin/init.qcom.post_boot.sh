@@ -1,6 +1,6 @@
 #! /vendor/bin/sh
 
-# Copyright (c) 2012-2013, 2016-2018, The Linux Foundation. All rights reserved.
+# Copyright (c) 2012-2013, 2016-2017, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -2748,6 +2748,15 @@ case "$target" in
         echo 0 > /sys/module/lpm_levels/parameters/sleep_disabled
 	echo 100 > /proc/sys/vm/swappiness
 	echo 120 > /proc/sys/vm/watermark_scale_factor
+
+	# Enable SSR feature on stage2 and dp not exits device
+	sec_stage=`cat /proc/mz_info/sec_stage`
+	dp_exist=`cat /proc/mz_info/dp_exist`
+	if [ "$sec_stage" == "stage2" ] && [ "$dp_exist" == "0" ]; then
+		setprop persist.sys.ssr.restart_level ALL_ENABLE
+	else
+		setprop persist.sys.ssr.restart_level ALL_DISABLE
+	fi
     ;;
 esac
 

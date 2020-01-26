@@ -28,7 +28,8 @@
 #
 
 on early-init
-    exec u:r:vendor_modprobe:s0 -- /vendor/bin/modprobe -a -d /vendor/lib/modules pinctrl-wcd wcd-dsp-glink snd-soc-wcd-spi snd-soc-sdm845
+    write /proc/bootprof "INIT:early-init"
+    exec u:r:vendor_modprobe:s0 -- /vendor/bin/modprobe -a -d /vendor/lib/modules snd-soc-cs35l41-spi pinctrl-wcd wcd-dsp-glink snd-soc-wcd-spi snd-soc-sdm845
     write /proc/sys/kernel/sched_boost 1
     mkdir /dsp 0771 media media
     mkdir /firmware 0771 system system
@@ -45,15 +46,41 @@ on init
     write /dev/stune/top-app/schedtune.colocate 1
     write /sys/module/qpnp_rtc/parameters/poweron_alarm 1
 
+    # Added by jiangziyu@meizu.com. For mount CD-ROM
+    mkdir /mnt/cd-rom 0555 system system
+    # End of Added by jiangziyu@meizu.com.
+    # FLyme:chenjianbo add vibrator permession {@
+        chmod 0666 /sys/class/meizu/motor/on_off
+        chown system system /sys/class/meizu/motor/on_off
+        chmod 0660 /sys/class/meizu/motor/set_cspress
+        chown system system /sys/class/meizu/motor/set_cspress
+        chmod 0660 /sys/class/meizu/motor/set_mback
+        chown system system /sys/class/meizu/motor/set_mback
+        chmod 0660 /sys/class/meizu/motor/rtp
+        chown system system /sys/class/meizu/motor/rtp
+        chmod 0660 /sys/class/meizu/motor/set_rtp
+        chown system system /sys/class/meizu/motor/set_rtp
+    # @}
+    # FLyme:chenjianbo add cs_press  permession {@
+        chmod 0666  /sys/cs_press/cs_press/sleep
+        chown system system  /sys/cs_press/cs_press/sleep
+    # @}
 on fs
+    write /proc/bootprof "INIT:Mount_START"
     wait /dev/block/platform/soc/1d84000.ufshc
     symlink /dev/block/platform/soc/1d84000.ufshc /dev/block/bootdevice
     mount_all /vendor/etc/fstab.qcom
     swapon_all /vendor/etc/fstab.qcom
     restorecon_recursive /persist
     mkdir /persist/data 0700 system system
+    write /proc/bootprof "INIT:Mount_END"
+
+    # Added by jiangziyu@meizu.com. For mount CD-ROM
+    mount iso9660 loop@/system/etc/iAmCdRom.iso /mnt/cd-rom ro
+    # End of Added by jiangziyu@meizu.com.
 
 on post-fs
+    write /proc/bootprof "INIT:post-fs"
     start qseecomd
     exec - system system -- /vendor/bin/init.qti.qseecomd.sh
     write /dev/ipa 1
@@ -64,6 +91,7 @@ service sec_nvm /vendor/bin/sec_nvm
     group system
 
 on post-fs-data
+    write /proc/bootprof "INIT:post-fs-data"
     mkdir /data/tombstones 0771 system system
     mkdir /tombstones/modem 0771 system system
     mkdir /tombstones/lpass 0771 system system
@@ -74,9 +102,41 @@ on post-fs-data
     mkdir /data/misc/seemp 0700 system system
     mkdir /data/vendor/tloc 0700 system drmrpc
 
+# FLYME:perf@system Feature: add bootprof {@
+    chown system system /proc/bootprof
+    chmod 0664 /proc/bootprof
+# @}
+
+#For SRS  wenjun.zhang@BSP
+    chown system system /sys/srs/srs_enable
+    chmod 0664 /sys/srs/srs_enable
+    chown system system /sys/srs/srs_debug
+    chmod 0664 /sys/srs/srs_debug
+    chown system system /sys/srs/srs_cpulevel
+    chmod 0664 /sys/srs/srs_cpulevel
+    chown system system /sys/srs/srs_gpulevel
+    chmod 0664 /sys/srs/srs_gpulevel
+    chown system system /sys/srs/srs_buslevel
+    chmod 0664 /sys/srs/srs_buslevel
+    chown system system /sys/srs/srs_iolevel
+    chmod 0664 /sys/srs/srs_iolevel
+    chown system system /sys/srs/srs_memlevel
+    chmod 0664 /sys/srs/srs_memlevel
+
+# Change the rstinfo perms
+    chown system system /sys/rstinfo/rstinfo_enable
+    restorecon /sys/rstinfo/rstinfo_enable
+    chown system system /proc/stability/rstinfo_cnt
+    chown system system /proc/stability/rootinfo_cnt
+    chown system system /proc/stability/rstinfo_debug
+    chown system system /proc/stability/rstinfo_cnt_log
+    chown system system /proc/stability/rstinfo_rst_log
+    chown system system /proc/stability/rstinfo_android_cnt
+
 # For cpusets initialize for Silver Only first and then Silver + Gold
 # Silver Only configuration cannot work with 0-7
 on boot
+    write /proc/bootprof "INIT:boot"
     chown system system /sys/kernel/hbtp/display_pwr
     start rmt_storage
     start rfs_access
@@ -88,7 +148,7 @@ on boot
     write /dev/cpuset/system-background/cpus 0-3
     write /dev/cpuset/top-app/cpus 0-7
     write /dev/cpuset/foreground/cpus 0-7
-    write /dev/cpuset/foreground/boost/cpus 0-7
+    write /dev/cpuset/foreground/boost/cpus 4-7
     write /dev/cpuset/background/cpus 0-7
     write /dev/cpuset/system-background/cpus 0-7
 
@@ -105,6 +165,82 @@ on boot
     mkdir /persist/speccfg 0770 system system
     chmod 0660 /persist/speccfg/spec
     chown system system /persist/speccfg/spec
+
+# Permissions for mz_rpmb_ctl
+    chown system system /dev/mz_rpmb_ctl
+    chmod 0600 /dev/mz_rpmb_ctl
+
+# Permissions for display
+    chmod 0644 /sys/class/meizu/lcm/display/hbm
+    chown system system /sys/class/meizu/lcm/display/hbm
+
+# Permissions for fingerprint
+    chmod 0644 /sys/class/meizu/fp/qos_set
+    chown system system /sys/class/meizu/fp/qos_set
+
+# FLYME:zengyonglong.AOD for change aod display mode permission
+    chown system system /sys/class/meizu/lcm/display/doze_mode
+    chmod 0666 /sys/class/meizu/lcm/display/doze_mode
+
+# BSP:yangxiaokun.bsp for exit or enter aod permission
+    chown system system /sys/class/meizu/lcm/display/aod
+    chmod 0666 /sys/class/meizu/lcm/display/aod
+
+    chmod 0644 sys/class/meizu/lcm/display/DC_Enable
+    chown system system sys/class/meizu/lcm/display/DC_Enable
+
+#Permissions for gesture {@
+    chown system system /sys/class/meizu/tp/gesture_control
+    chmod 0660 /sys/class/meizu/tp/gesture_control
+
+# @}
+#Permissions for breath blink {@
+    chown system system /sys/class/meizu/mx_leds/leds/breath/blink
+    chmod 0660 /sys/class/meizu/mx_leds/leds/breath/blink
+# @}
+#<<chenyuwen
+    chmod 0666 /sys/class/meizu/charger/fast_usb_mode
+    chown system system /sys/class/meizu/charger/fast_usb_mode
+    chmod 0666 /sys/class/meizu/charger/fastcharging
+    chown system system /sys/class/meizu/charger/fastcharging
+    chmod 0444 /sys/class/meizu/usb_thermal/sync_temp
+    chown system system /sys/class/meizu/usb_thermal/sync_temp
+#chenyuwen>>
+
+# added for breath-led & vibrator {@liudong
+# Permissions for breath-led
+    chmod 0664 /sys/class/meizu/mx_leds/leds/breath/blink
+    chown system system /sys/class/meizu/mx_leds/leds/breath/blink
+# Permissions for vibrator
+    chmod 0666 /sys/class/meizu/motor/on_off
+    chown system system /sys/class/meizu/motor/on_off
+    chmod 0666 /sys/class/meizu/motor/freq
+    chown system system /sys/class/meizu/motor/freq
+    chmod 0666 /sys/class/meizu/motor/rtp
+    chown system system /sys/class/meizu/motor/rtp
+    chmod 0666 /sys/class/meizu/motor/set_rtp
+    chown system system /sys/class/meizu/motor/set_rtp
+    chmod 0666 /sys/class/meizu/motor/timeout
+    chown system system /sys/class/timed_output/vibrator/enable
+    chmod 0666 /sys/class/meizu/motor/proline
+    chown system system /sys/class/meizu/motor/proline
+    chmod 0666 /sys/class/meizu/motor/set_cspress
+    chown system system /sys/class/meizu/motor/set_cspress
+    chmod 0666 /sys/class/meizu/motor/set_mback
+    chown system system /sys/class/meizu/motor/set_mback
+# add end @}
+# Permissions add for mz_sensor_test {@
+    chmod 0666 /vendor/bin/mz_sensor_test
+    chown system system /vendor/bin/mz_sensor_test
+# @}
+# Permissions add for mz_sensor_test {@
+    chmod 0666 /sys/class/meizu/lcm/display/doze_s2
+    chown system system /sys/class/meizu/lcm/display/doze_s2
+# @}
+
+# Permissions for display
+    chmod 0644 /sys/class/meizu/lcm/display/sunnyscreen
+    chown system system /sys/class/meizu/lcm/display/sunnyscreen
 
 #start camera server as daemon
 #service qcamerasvr /system/bin/mm-qcamera-daemon
@@ -137,7 +273,6 @@ on property:sys.shutdown.requested=*
     stop per_proxy
 
 on charger
-    start hvdcp_opti
     start power_off_alarm
 
 ## import cne init file
@@ -273,6 +408,10 @@ service cdsprpcd /vendor/bin/cdsprpcd
 #    chown system drmrpc /sys/devices/f9966000.i2c/i2c-1/1-0020/secure_touch
 #
 #
+    chmod 0660 /sys/bus/i2c/devices/3-0020/secure_touch_enable
+    chmod 0440 /sys/bus/i2c/devices/3-0020/secure_touch
+    chown system drmrpc /sys/bus/i2c/devices/3-0020/secure_touch_enable
+    chown system drmrpc /sys/bus/i2c/devices/3-0020/secure_touch
 #
 ## imsdatadaemon starts with root and UID will be downgraded to SYSTEM.
 service imsqmidaemon /system/vendor/bin/imsqmidaemon
@@ -395,12 +534,14 @@ on property:init.svc.hwcomposer-2-1=restarting
 #    user system
 #    group system
 
-service hbtp /system/vendor/bin/hbtp_daemon
-     class main
-     user system
-     group system
-     capabilities SYS_NICE
-     disabled
+#Add by xuguochu@meizu.com
+#service hbtp /system/vendor/bin/hbtp_daemon
+#     class main
+#     user system
+#     group system
+#     capabilities SYS_NICE
+#     disabled
+#end
 
 service qfp-daemon /vendor/bin/qfp-daemon
     class late_start
@@ -413,16 +554,17 @@ service energy-awareness /system/vendor/bin/energy-awareness
     group system
     oneshot
 
+# PA calibration {@
+on post-fs-data
+    chown system audio /dev/msm_cirrus_playback
+    chmod 0660 /dev/msm_cirrus_playback
+# @}
+
 service seempd /system/bin/seempd
     class late_start
     user system
     group system sdcard_rw
     socket seempdw dgram 0666 system system
-
-service hvdcp_opti /system/vendor/bin/hvdcp_opti
-    class main
-    user root
-    group system wakelock
 
 service smcinvoked /system/bin/smcinvoked
     class main
@@ -433,3 +575,80 @@ service tlocd /vendor/bin/tloc_daemon
     class late_start
     user system
     group drmrpc gps net_raw
+
+#BSP: device status logger service
+service mdevice_manager /vendor/bin/mdevice_manager
+    class late_start
+    user system
+    group system sdcard_rw
+    seclabel u:r:mdevice_manager:s0
+
+#BSP: mkelog parser
+service mkelog_parser /vendor/bin/mkelog_parser
+    class late_start
+    user system
+    group system sdcard_rw
+    seclabel u:r:mkelog_parser:s0
+    oneshot
+
+# FLYME:wanglong@Telecom.TeleService.Feature#636837 {@
+   chmod 0666 /sys/bus/msm_subsys/devices/subsys4/restart_level
+#
+
+#FLYME:liujianfeng@feature for tool of ap&cp log{@
+service logkit /system/vendor/bin/logkit /data/media/0/Android/log/  50  0
+    class late_start
+    user root
+    group log system
+    socket logkit stream 666 system system
+    disabled
+    oneshot
+
+service stop_logkit /system/vendor/bin/logkit -k /data/media/0/Android/log/
+    class late_start
+    user root
+    group system log
+    socket logkit stream 666 system system
+    disabled
+    oneshot
+
+on property:persist.radio.aplog=1
+    start logkit
+on property:persist.radio.aplog=0
+    start stop_logkit
+
+service diag_mdlog /vendor/bin/diag_mdlog -f /sdcard/DiagFromAssets.cfg -o /data/media/0/diag_logs -s 200 -n 200 -w /data/media/0/diag_logs
+    class late_start
+    user root
+    group log system qcom_diag sdcard_rw sdcard_r media_rw
+    disabled
+    oneshot #for running only once
+
+service dm_stop /vendor/bin/diag_mdlog -k
+    class late_start
+    user root
+    group log system qcom_diag sdcard_rw sdcard_r media_rw
+    disabled
+    oneshot #for running only once
+
+on property:persist.sys.diag.cmd=2
+    start diag_mdlog
+
+on property:persist.sys.diag.cmd=1
+    start dm_stop
+    setprop persist.sys.diag.cmd 0
+# @}
+
+# Camera_Edit add by yzw@meizu.com To enable samsung remosaic
+service remosaic_daemon /system/vendor/bin/remosaic_daemon
+    class late_start
+    user camera
+    group camera
+
+# Add M63 cs press calibration by Richard {@
+on post-fs-data
+    chown system system /dev/ndt
+    chmod 0666 /dev/ndt
+    chown system system /sys/cs_press/cs_press/cal_data
+    chmod 0666 /sys/cs_press/cs_press/cal_data
+# @}
