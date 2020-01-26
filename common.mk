@@ -7,6 +7,11 @@
 $(call inherit-product, vendor/meizu/sdm845-common/sdm845-common-vendor.mk)
 
 # Overlays
+DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay-device
+PRODUCT_PACKAGE_OVERLAYS +=  $(LOCAL_PATH)/overlay-product
+
+DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay-sdm845
+
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay \
     $(LOCAL_PATH)/overlay-mokee
@@ -149,6 +154,9 @@ PRODUCT_PACKAGES += \
     libloc_core \
     liblocation_api \
     liblocbatterylistener
+
+PRODUCT_COPY_FILES += \
+    $(call find-copy-subdir-files,*,$(LOCAL_PATH)/gps/etc,$(TARGET_COPY_OUT_VENDOR)/etc)
 
 # Health
 PRODUCT_PACKAGES += \
