@@ -129,6 +129,20 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.biometrics.fingerprint@2.1
 
+# GPS
+PRODUCT_PACKAGES += \
+    android.hardware.gnss@2.0-impl-qti \
+    android.hardware.gnss@2.0-service-qti \
+    libbatching \
+    libcurl \
+    libgeofencing \
+    libgnss \
+    libgnsspps \
+    libgps.utils \
+    libloc_core \
+    liblocation_api \
+    liblocbatterylistener
+
 # Health
 PRODUCT_PACKAGES += \
     android.hardware.health@2.0-service
