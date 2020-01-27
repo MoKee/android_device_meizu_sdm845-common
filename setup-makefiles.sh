@@ -29,6 +29,7 @@ setup_vendor "${DEVICE_COMMON}" "${VENDOR}" "${MOKEE_ROOT}" true
 write_headers "m1882 m1892"
 
 write_makefiles "${MY_DIR}/proprietary-files.txt"
+write_makefiles "${MY_DIR}/proprietary-files-qc.txt"
 
 # Finish
 write_footers
