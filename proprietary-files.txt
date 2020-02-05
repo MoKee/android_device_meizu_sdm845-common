@@ -108,6 +108,14 @@ vendor/firmware/cs35l41-dsp1-spk-prot-left.wmfw
 vendor/firmware/cs35l41-dsp1-spk-prot-right.bin
 vendor/firmware/cs35l41-dsp1-spk-prot-right.wmfw
 
+# Audio - HAL
+vendor/lib/hw/audio.primary.sdm845.so
+vendor/lib/libaudio_log_utils.so
+vendor/lib/libtinycompress_vendor.so
+vendor/lib64/hw/audio.primary.sdm845.so
+vendor/lib64/libaudio_log_utils.so
+vendor/lib64/libtinycompress_vendor.so
+
 # Camera
 lib/libarcsoft_supernight.so
 lib/libsmcinvokecred.so
