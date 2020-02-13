@@ -242,6 +242,7 @@ vendor/firmware/bu64748gwz.coeff
 vendor/firmware/bu64748gwz.prog
 
 # Charger
+sbin/charger:bin/meizu_charger
 vendor/bin/hvdcp_opti
 
 # Display - HAL
