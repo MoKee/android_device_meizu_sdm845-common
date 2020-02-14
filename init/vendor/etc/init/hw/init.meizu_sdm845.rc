@@ -71,6 +71,8 @@ on post-fs-data
     chmod 0666 /sys/cs_press/cs_press/cal_data
     # @}
 
+    setprop sys.meizu.fingerprint.boot start
+
 on boot
     # Permissions for mz_rpmb_ctl
     chown system system /dev/mz_rpmb_ctl
