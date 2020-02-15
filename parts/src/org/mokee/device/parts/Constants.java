@@ -10,5 +10,6 @@ package org.mokee.device.parts;
 class Constants {
 
     static final String AOD_ENABLE = "/sys/class/meizu/lcm/display/aod";
+    static final String BRIGHTNESS = "/sys/class/backlight/panel0-backlight/brightness";
 
 }
