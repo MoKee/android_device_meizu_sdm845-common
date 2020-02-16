@@ -79,7 +79,6 @@ PRODUCT_PACKAGES += \
     libaudio-resampler \
     libdynproc \
     libtinyalsa \
-    libtinycompress \
     libqcompostprocbundle \
     libqcomvisualizer \
     libqcomvoiceprocessing \
@@ -199,20 +198,6 @@ PRODUCT_PACKAGES += \
     vendor.mokee.livedisplay@2.0-service.meizu_sdm845
 
 # Media
-PRODUCT_PACKAGES += \
-    libOmxAacEnc \
-    libOmxAmrEnc \
-    libOmxCore \
-    libOmxEvrcEnc \
-    libOmxG711Enc \
-    libOmxQcelp13Enc \
-    libOmxSwVdec \
-    libOmxVdec \
-    libOmxVenc \
-    libc2dcolorconvert \
-    libmm-omxcore \
-    libstagefrighthw
-
 PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,$(LOCAL_PATH)/media,$(TARGET_COPY_OUT_VENDOR)/etc) \
     $(LOCAL_PATH)/media/media_profiles.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_V1_0.xml
