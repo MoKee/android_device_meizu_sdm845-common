@@ -21,14 +21,15 @@ public class AODService extends Service {
     private static final String TAG = "AODService";
     private static final boolean DEBUG = false;
 
-    private static final long AOD_DELAY_MS = 4000;
-    private static final long BRIGHTNESS_RESET_DELAY_MS = 200;
+    private static final long AOD_DELAY_MS = 200;
+    private static final long BRIGHTNESS_RESET_DELAY_MS = 500;
 
     private SettingObserver mSettingObserver;
     private ScreenReceiver mScreenReceiver;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private boolean mInteractive = true;
+    private boolean mAodEnabled = false;
 
     @Override
     public void onCreate() {
@@ -79,8 +80,18 @@ public class AODService extends Service {
         Log.d(TAG, "Device interactive");
         mInteractive = true;
         mHandler.removeCallbacksAndMessages(null);
-        FileUtils.writeLine(Constants.AOD_ENABLE, "0");
-        kickUpBrightness();
+        if (mAodEnabled) {
+            Log.d(TAG, "Exit AOD");
+            FileUtils.writeLine(Constants.AOD_ENABLE, "0");
+            mAodEnabled = false;
+        }
+        mHandler.postDelayed(() -> {
+            if (mInteractive) {
+                final String brightness = FileUtils.readOneLine(Constants.BRIGHTNESS);
+                Log.d(TAG, "Kick up brightness: " + brightness);
+                FileUtils.writeLine(Constants.BRIGHTNESS, brightness);
+            }
+        }, BRIGHTNESS_RESET_DELAY_MS);
     }
 
     void onDisplayOff() {
@@ -91,18 +102,9 @@ public class AODService extends Service {
             if (!mInteractive) {
                 Log.d(TAG, "Trigger AOD");
                 FileUtils.writeLine(Constants.AOD_ENABLE, "1");
+                mAodEnabled = true;
             }
         }, AOD_DELAY_MS);
-    }
-
-    private void kickUpBrightness() {
-        final String brightness = FileUtils.readOneLine(Constants.BRIGHTNESS);
-        mHandler.postDelayed(() -> {
-            if (mInteractive) {
-                Log.d(TAG, "Kick up brightness");
-                FileUtils.writeLine(Constants.BRIGHTNESS, brightness);
-            }
-        }, BRIGHTNESS_RESET_DELAY_MS);
     }
 
 }
