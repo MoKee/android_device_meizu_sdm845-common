@@ -146,7 +146,7 @@ ENABLE_VENDOR_RIL_SERVICE := true
 TARGET_RIL_VARIANT := caf
 
 # Security patch level
-VENDOR_SECURITY_PATCH := 2019-09-01
+VENDOR_SECURITY_PATCH := 2019-11-01
 
 # SELinux
 include device/qcom/sepolicy/sepolicy.mk
