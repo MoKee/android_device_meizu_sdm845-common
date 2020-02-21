@@ -29,3 +29,6 @@ persist.hvx.hwjpeg.enable=true
 #FLYME_MMF_AUDIO: AUDIO_ROTATION{@
 ro.audio.monitorRotation=true
 #@}
+
+# Fix network traffic monitor
+ro.bpf.disabled=1
