@@ -123,10 +123,10 @@ vendor/firmware/cs35l41-dsp1-spk-prot-right.wmfw
 # Audio - HAL
 lib/libaudioroute.so
 lib64/libaudioroute.so
-vendor/lib/hw/audio.primary.sdm845.so
+vendor/lib/hw/audio.primary.sdm845.so|d2c6b69f17dcf8f72dff87c4f22d6a7bcfee77fb
 vendor/lib/libaudio_log_utils.so
 vendor/lib/libtinycompress_vendor.so
-vendor/lib64/hw/audio.primary.sdm845.so
+vendor/lib64/hw/audio.primary.sdm845.so|b1b64d25a163461d1a694a67976a84eac87e78ba
 vendor/lib64/libaudio_log_utils.so
 vendor/lib64/libtinycompress_vendor.so
 
