@@ -577,7 +577,7 @@
     <ctl name="Cirrus SP FBPort" value="QUAT_MI2S_RX" />
     <ctl name="Cirrus SP" value="Config SP Disable" />
     <ctl name="Cirrus SP Usecase Config" value="None" />
-    <ctl name="Cirrus SP Channel Swap" value="LR" />
+    <ctl name="Cirrus SP Channel Swap" value="RL" />
     <ctl name="Cirrus SP Channel Swap Duration" value="48" />
     <!-- <ctl name="Cirrus SP Volume Attenuation" value="-18dB" /> -->
 
@@ -2048,14 +2048,14 @@
     <path name="speaker">
         <ctl name="Cirrus SP" value="Config SP Enable" />
         <ctl name="Cirrus SP Usecase Config" value="Music" />
-        <ctl name="Cirrus SP Channel Swap" value="LR" />
+        <ctl name="Cirrus SP Channel Swap" value="RL" />
         <path name="amp-receiver" />
         <path name="amp-speaker" />
     </path>
 
     <path name="speaker-reverse">
 	    <path name="speaker" />
-        <ctl name="Cirrus SP Channel Swap" value="RL" />
+        <ctl name="Cirrus SP Channel Swap" value="LR" />
     </path>
 
     <path name="speaker-mono">
@@ -2106,11 +2106,11 @@
     </path>
 
     <path name="speaker-stereo-channels-default">
-        <ctl name="Cirrus SP Channel Swap" value="LR" />
+        <ctl name="Cirrus SP Channel Swap" value="RL" />
     </path>
 
     <path name="speaker-stereo-channels-swap">
-        <ctl name="Cirrus SP Channel Swap" value="RL" />
+        <ctl name="Cirrus SP Channel Swap" value="LR" />
     </path>
 
     <path name="echo-reference handset">
