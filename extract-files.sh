@@ -42,3 +42,7 @@ fi
 "${MY_DIR}/setup-makefiles.sh"
 
 BLOB_ROOT="${MOKEE_ROOT}/vendor/${VENDOR}/${DEVICE_COMMON}/proprietary"
+
+# Audio
+sed -i 's|mixer_ctl_get_value|mixer_ctl_get_valxx|g' $BLOB_ROOT/vendor/lib/hw/audio.primary.sdm845.so
+sed -i 's|mixer_ctl_get_value|mixer_ctl_get_valxx|g' $BLOB_ROOT/vendor/lib64/hw/audio.primary.sdm845.so

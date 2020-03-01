@@ -55,6 +55,8 @@ TARGET_BOARD_PLATFORM_GPU := qcom-adreno630
 # Audio
 USE_DEVICE_SPECIFIC_AUDIO := true
 USE_XML_AUDIO_POLICY_CONF := 1
+TARGET_LD_SHIM_LIBS += /vendor/lib/hw/audio.primary.sdm845.so|/vendor/lib/libshim_audio.so
+TARGET_LD_SHIM_LIBS += /vendor/lib64/hw/audio.primary.sdm845.so|/vendor/lib64/libshim_audio.so
 
 # Camera
 USE_DEVICE_SPECIFIC_CAMERA := true
