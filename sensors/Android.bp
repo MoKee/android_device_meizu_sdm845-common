@@ -1,0 +1,40 @@
+cc_library_shared {
+    name: "android.hardware.sensors@1.0-impl.meizu_sdm845",
+    defaults: ["hidl_defaults"],
+    proprietary: true,
+    relative_install_path: "hw",
+    srcs: ["convert.cpp", "Sensors.cpp"],
+    shared_libs: [
+        "liblog",
+        "libcutils",
+        "libhardware",
+        "libbase",
+        "libutils",
+        "libhidlbase",
+        "libhidltransport",
+        "android.hardware.sensors@1.0",
+    ],
+    static_libs: [
+        "multihal",
+    ],
+}
+
+cc_binary {
+    name: "android.hardware.sensors@1.0-service.meizu_sdm845",
+    relative_install_path: "hw",
+    vendor: true,
+    vintf_fragments: ["android.hardware.sensors@1.0-service.meizu_sdm845.xml"],
+    init_rc: ["android.hardware.sensors@1.0-service.meizu_sdm845.rc"],
+    srcs: ["service.cpp"],
+
+    shared_libs: [
+        "liblog",
+        "libcutils",
+        "libdl",
+        "libbase",
+        "libutils",
+        "libhidlbase",
+        "libhidltransport",
+        "android.hardware.sensors@1.0",
+    ],
+}
