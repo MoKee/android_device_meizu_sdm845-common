@@ -244,8 +244,8 @@ PRODUCT_COPY_FILES += \
 
 # Sensors
 PRODUCT_PACKAGES += \
-    android.hardware.sensors@1.0-impl \
-    android.hardware.sensors@1.0-service \
+    android.hardware.sensors@1.0-impl.meizu_sdm845 \
+    android.hardware.sensors@1.0-service.meizu_sdm845 \
     libsensorndkbridge
 
 # Telephony
