@@ -29,4 +29,8 @@ class Utils {
         FileUtils.writeLine("/sys/class/meizu/lcm/display/doze_s2", "0");
     }
 
+    static void exitAOD() {
+        FileUtils.writeLine("/sys/class/meizu/lcm/display/aod", "0");
+    }
+
 }
