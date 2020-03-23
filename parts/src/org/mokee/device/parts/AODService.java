@@ -22,7 +22,6 @@ public class AODService extends Service {
     private static final boolean DEBUG = false;
 
     private static final long AOD_DELAY_MS = 4000;
-    private static final long BRIGHTNESS_RESET_DELAY_MS = 200;
 
     private SettingObserver mSettingObserver;
     private ScreenReceiver mScreenReceiver;
@@ -78,15 +77,14 @@ public class AODService extends Service {
     void onDisplayOn() {
         Log.d(TAG, "Device interactive");
         mInteractive = true;
-        mHandler.removeCallbacksAndMessages(null);
         FileUtils.writeLine(Constants.AOD_ENABLE, "0");
         kickUpBrightness();
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     void onDisplayOff() {
         Log.d(TAG, "Device non-interactive");
         mInteractive = false;
-        mHandler.removeCallbacksAndMessages(null);
         mHandler.postDelayed(() -> {
             if (!mInteractive) {
                 Log.d(TAG, "Trigger AOD");
@@ -97,12 +95,7 @@ public class AODService extends Service {
 
     private void kickUpBrightness() {
         final String brightness = FileUtils.readOneLine(Constants.BRIGHTNESS);
-        mHandler.postDelayed(() -> {
-            if (mInteractive) {
-                Log.d(TAG, "Kick up brightness");
-                FileUtils.writeLine(Constants.BRIGHTNESS, brightness);
-            }
-        }, BRIGHTNESS_RESET_DELAY_MS);
+        FileUtils.writeLine(Constants.BRIGHTNESS, brightness);
     }
 
 }
