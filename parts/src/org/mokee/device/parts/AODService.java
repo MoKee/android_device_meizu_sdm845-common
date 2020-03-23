@@ -14,14 +14,12 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
-import org.mokee.internal.util.FileUtils;
-
 public class AODService extends Service {
 
     private static final String TAG = "AODService";
     private static final boolean DEBUG = false;
 
-    private static final long AOD_DELAY_MS = 4000;
+    private static final long AOD_DELAY_MS = 1000;
 
     private SettingObserver mSettingObserver;
     private ScreenReceiver mScreenReceiver;
@@ -77,7 +75,6 @@ public class AODService extends Service {
     void onDisplayOn() {
         Log.d(TAG, "Device interactive");
         mInteractive = true;
-        FileUtils.writeLine(Constants.AOD_ENABLE, "0");
         mHandler.removeCallbacksAndMessages(null);
     }
 
@@ -87,7 +84,7 @@ public class AODService extends Service {
         mHandler.postDelayed(() -> {
             if (!mInteractive) {
                 Log.d(TAG, "Trigger AOD");
-                FileUtils.writeLine(Constants.AOD_ENABLE, "1");
+                Utils.enterAOD();
             }
         }, AOD_DELAY_MS);
     }
