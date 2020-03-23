@@ -23,9 +23,12 @@ public class AODService extends Service {
 
     private SettingObserver mSettingObserver;
     private ScreenReceiver mScreenReceiver;
+    private ProximityListener mProximityListener;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private boolean mInteractive = true;
+    private boolean mCovered = false;
+    private boolean mInAOD = false;
 
     @Override
     public void onCreate() {
@@ -34,6 +37,7 @@ public class AODService extends Service {
 
         mSettingObserver = new SettingObserver(this);
         mScreenReceiver = new ScreenReceiver(this);
+        mProximityListener = new ProximityListener(this);
 
         mSettingObserver.enable();
 
@@ -49,6 +53,7 @@ public class AODService extends Service {
 
         mSettingObserver.disable();
         mScreenReceiver.disable();
+        mProximityListener.disable();
     }
 
     @Override
@@ -75,18 +80,44 @@ public class AODService extends Service {
     void onDisplayOn() {
         Log.d(TAG, "Device interactive");
         mInteractive = true;
+        mProximityListener.disable();
         mHandler.removeCallbacksAndMessages(null);
     }
 
     void onDisplayOff() {
         Log.d(TAG, "Device non-interactive");
+        mInAOD = false;
         mInteractive = false;
         mHandler.postDelayed(() -> {
-            if (!mInteractive) {
-                Log.d(TAG, "Trigger AOD");
-                Utils.enterAOD();
-            }
+            mProximityListener.enable();
+            updateAOD();
         }, AOD_DELAY_MS);
+    }
+
+    void onProximityNear() {
+        Log.d(TAG, "Device covered");
+        mCovered = true;
+        updateAOD();
+    }
+
+    void onProximityFar() {
+        Log.d(TAG, "Device uncovered");
+        mCovered = false;
+        updateAOD();
+    }
+
+    private void updateAOD() {
+        final boolean state = !mInteractive && !mCovered;
+        if (mInAOD != state) {
+            mInAOD = state;
+            if (state) {
+                Log.d(TAG, "Enter AOD");
+                Utils.enterAOD();
+            } else {
+                Log.d(TAG, "Exit AOD");
+                Utils.exitAOD();
+            }
+        }
     }
 
 }
