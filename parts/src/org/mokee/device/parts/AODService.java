@@ -78,7 +78,6 @@ public class AODService extends Service {
         Log.d(TAG, "Device interactive");
         mInteractive = true;
         FileUtils.writeLine(Constants.AOD_ENABLE, "0");
-        kickUpBrightness();
         mHandler.removeCallbacksAndMessages(null);
     }
 
@@ -91,11 +90,6 @@ public class AODService extends Service {
                 FileUtils.writeLine(Constants.AOD_ENABLE, "1");
             }
         }, AOD_DELAY_MS);
-    }
-
-    private void kickUpBrightness() {
-        final String brightness = FileUtils.readOneLine(Constants.BRIGHTNESS);
-        FileUtils.writeLine(Constants.BRIGHTNESS, brightness);
     }
 
 }
