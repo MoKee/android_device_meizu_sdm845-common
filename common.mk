@@ -133,6 +133,12 @@ PRODUCT_PACKAGES += \
     android.hardware.biometrics.fingerprint@2.1 \
     vendor.mokee.biometrics.fingerprint.inscreen@1.0-service.meizu_sdm845
 
+# Gatekeeper / Keymaster
+PRODUCT_PACKAGES += \
+    android.hardware.gatekeeper@1.0-impl \
+    android.hardware.gatekeeper@1.0-service \
+    android.hardware.keymaster@4.0-service
+
 # GPS
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl-qti \
