@@ -2,3 +2,7 @@ service vendor.livedisplay-hal-2-0-meizu_sdm845 /vendor/bin/hw/vendor.mokee.live
     class late_start
     user system
     group system
+
+on post-fs-data
+    mkdir /data/vendor/display
+    chown system system /data/vendor/display
