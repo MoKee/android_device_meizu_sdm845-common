@@ -190,6 +190,7 @@ PRODUCT_PACKAGES += \
 
 # LiveDisplay
 PRODUCT_PACKAGES += \
+    vendor.mokee.livedisplay@2.0-init.sh \
     vendor.mokee.livedisplay@2.0-service.meizu_sdm845
 
 # Media
