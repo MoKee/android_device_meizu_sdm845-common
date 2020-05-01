@@ -87,7 +87,7 @@ Return<void> FingerprintInscreen::onPress() {
     set(BOOST_ENABLE_PATH, 1);
     set(HBM_ENABLE_PATH, 1);
     std::thread([this]() {
-        std::this_thread::sleep_for(std::chrono::milliseconds(60));
+        std::this_thread::sleep_for(std::chrono::milliseconds(150));
         if (mFingerPressed) {
             notifyHal(NOTIFY_FINGER_DETECTED, 0);
         }
